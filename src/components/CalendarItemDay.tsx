@@ -264,6 +264,7 @@ export const CalendarItemDay = ({
 
   return (
     <Pressable
+      testID={`calendar-day-${metadata.id}`}
       disabled={!onPress || metadata.isDisabled}
       onPress={handlePress}
       style={({
