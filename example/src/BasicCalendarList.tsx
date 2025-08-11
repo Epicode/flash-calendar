@@ -12,6 +12,7 @@ export const BasicCalendarList = () => {
       onCalendarDayPress={onCalendarDayPress}
       calendarDayHeight={48}
       showSixWeeks
+      calendarMaxDateId="2026-12-31"
     />
   );
 };

@@ -85,7 +85,11 @@ const getEndingMonth = (
 ) => {
   const endingMonthFromRange = addMonths(baseDate, calendarFutureScrollRange);
   const newEndingMonthId = toDateId(endingMonthFromRange);
-  const safeMaxDateId = calendarMaxDateId ?? newEndingMonthId;
+  const startMonthIdOfCalendarMaxDate = calendarMaxDateId
+    ? toDateId(startOfMonth(fromDateId(calendarMaxDateId)))
+    : calendarMaxDateId;
+
+  const safeMaxDateId = startMonthIdOfCalendarMaxDate ?? newEndingMonthId;
 
   // We've exceeded the max date
   return newEndingMonthId > safeMaxDateId
@@ -100,7 +104,10 @@ const getStartingMonth = (
 ) => {
   const startingMonthFromRange = subMonths(baseDate, calendarPastScrollRange);
   const newStartingMonthId = toDateId(startingMonthFromRange);
-  const safeMinDateId = calendarMinDateId ?? newStartingMonthId;
+  const startMonthIdOfCalendarMinDate = calendarMinDateId
+    ? toDateId(startOfMonth(fromDateId(calendarMinDateId)))
+    : calendarMinDateId;
+  const safeMinDateId = startMonthIdOfCalendarMinDate ?? newStartingMonthId;
 
   // We've exceeded the min date.
   return safeMinDateId > newStartingMonthId
@@ -168,6 +175,12 @@ export const useCalendarList = ({
         calendarMaxDateId,
         startingMonth
       );
+
+      const endingMonthId = toDateId(endingMonth);
+
+      if (monthList.some((i) => i.id === endingMonthId)) {
+        return monthList;
+      }
 
       const newMonths = buildMonthList(
         startingMonth,
