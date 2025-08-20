@@ -1,5 +1,3 @@
-import type { FlashListProps, FlashListRef } from "@shopify/flash-list";
-import { FlashList } from "@shopify/flash-list";
 import type { Ref } from "react";
 import React, {
   forwardRef,
@@ -9,7 +7,7 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { View } from "react-native";
+import { FlatList, FlatListProps, View } from "react-native";
 
 import type { CalendarProps } from "../components/Calendar";
 import { Calendar } from "../components/Calendar";
@@ -29,7 +27,10 @@ const keyExtractor = (month: CalendarMonth) => month.id;
 
 export interface CalendarListProps
   extends Omit<CalendarProps, "calendarMonthId">,
-    Omit<FlashListProps<CalendarMonthEnhanced>, "renderItem" | "data"> {
+    Omit<
+      FlatListProps<CalendarMonthEnhanced>,
+      "renderItem" | "data" | "onEndReached"
+    > {
   /**
    * How many months to show before the current month. Once the user scrolls
    * past this range and if they haven't exceeded the `calendarMinDateId`, new
@@ -71,7 +72,7 @@ export interface CalendarListProps
    * with an alternative (e.g. a BottomSheet FlashList).
    * @defaultValue FlashList
    */
-  CalendarScrollComponent?: typeof FlashList;
+  CalendarScrollComponent?: typeof FlatList;
 
   /**
    * Overwrites the default `Calendar` component.
@@ -88,6 +89,8 @@ export interface CalendarListProps
    */
   // renderItem?: FlashListProps<CalendarMonthEnhanced>["renderItem"];
   CalendarItemComponent?: React.NamedExoticComponent<CalendarProps>;
+
+  onEndReached?: () => void;
 }
 
 interface ImperativeScrollParams {
@@ -122,7 +125,7 @@ export const CalendarList = memo(
       calendarPastScrollRangeInMonths = 12,
       calendarFutureScrollRangeInMonths = 12,
       calendarFirstDayOfWeek = "sunday",
-      CalendarScrollComponent = FlashList,
+      CalendarScrollComponent = FlatList,
       calendarFormatLocale,
 
       // Spacings
@@ -279,7 +282,7 @@ export const CalendarList = memo(
       ]
     );
 
-    const flashListRef = useRef<FlashListRef<CalendarMonthEnhanced>>(null);
+    const flashListRef = useRef<FlatList<CalendarMonthEnhanced>>(null);
 
     useImperativeHandle(ref, () => ({
       scrollToMonth(
@@ -358,6 +361,7 @@ export const CalendarList = memo(
     return (
       <CalendarScrollComponent
         data={monthListWithCalendarProps}
+        onScrollToIndexFailed={() => {}}
         initialScrollIndex={initialMonthIndex}
         keyExtractor={keyExtractor}
         onEndReached={handleOnEndReached}
