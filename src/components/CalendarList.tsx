@@ -3,9 +3,11 @@ import React, {
   forwardRef,
   memo,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import { FlatList, FlatListProps, View } from "react-native";
 
@@ -358,10 +360,47 @@ export const CalendarList = memo(
       [calendarContainerStyle]
     );
 
+    const handleOverrideItemLayout = useCallback<
+      NonNullable<FlatListProps<CalendarMonth>["getItemLayout"]>
+    >(
+      (data, index) => {
+        const monthHeight = getHeightForMonth({
+          calendarMonth: data![index]!,
+          calendarSpacing,
+          calendarDayHeight,
+          calendarMonthHeaderHeight,
+          calendarRowVerticalSpacing,
+          calendarAdditionalHeight,
+          calendarWeekHeaderHeight,
+        });
+        return { length: monthHeight, offset: monthHeight * index, index };
+      },
+      [
+        calendarAdditionalHeight,
+        calendarDayHeight,
+        calendarMonthHeaderHeight,
+        calendarRowVerticalSpacing,
+        calendarSpacing,
+        calendarWeekHeaderHeight,
+      ]
+    );
+
+    const onScrollToIndexFailed = useCallback<
+      NonNullable<FlatListProps<CalendarMonth>["onScrollToIndexFailed"]>
+    >((p) => {
+      setTimeout(() => {
+        flashListRef.current?.scrollToIndex({
+          index: p.index,
+          animated: false,
+        });
+      }, 100);
+    }, []);
+
     return (
       <CalendarScrollComponent
         data={monthListWithCalendarProps}
-        onScrollToIndexFailed={() => {}}
+        onScrollToIndexFailed={onScrollToIndexFailed}
+        getItemLayout={handleOverrideItemLayout}
         initialScrollIndex={initialMonthIndex}
         keyExtractor={keyExtractor}
         onEndReached={handleOnEndReached}
