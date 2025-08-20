@@ -3,11 +3,9 @@ import React, {
   forwardRef,
   memo,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
 } from "react";
 import { FlatList, FlatListProps, View } from "react-native";
 
