@@ -371,6 +371,7 @@ export const CalendarList = memo(
           calendarRowVerticalSpacing,
           calendarAdditionalHeight,
           calendarWeekHeaderHeight,
+          showSixWeeks,
         });
         return { length: monthHeight, offset: monthHeight * index, index };
       },
@@ -381,6 +382,7 @@ export const CalendarList = memo(
         calendarRowVerticalSpacing,
         calendarSpacing,
         calendarWeekHeaderHeight,
+        showSixWeeks,
       ]
     );
 
@@ -411,6 +413,7 @@ export const CalendarList = memo(
         getItemLayout={handleOverrideItemLayout}
         keyExtractor={keyExtractor}
         onEndReached={handleOnEndReached}
+        initialScrollIndex={initialMonthIndex}
         ref={flashListRef}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
