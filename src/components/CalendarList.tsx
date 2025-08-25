@@ -3,7 +3,6 @@ import React, {
   forwardRef,
   memo,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -392,19 +391,10 @@ export const CalendarList = memo(
       setTimeout(() => {
         flashListRef.current?.scrollToIndex({
           index: p.index,
-          animated: true,
+          animated: false,
         });
       }, 100);
     }, []);
-
-    useEffect(() => {
-      if (initialMonthIndex) {
-        flashListRef.current?.scrollToIndex({
-          index: initialMonthIndex,
-          animated: true,
-        });
-      }
-    }, [initialMonthIndex]);
 
     return (
       <CalendarScrollComponent
