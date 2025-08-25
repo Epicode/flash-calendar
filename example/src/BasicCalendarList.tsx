@@ -1,18 +1,18 @@
 import React from "react";
 
 import { Calendar } from "../../src";
-import { useDateRange } from "@marceloterreiro/flash-calendar";
+import { useDateRange } from "../../src/hooks/useDateRange";
 
 export const BasicCalendarList = () => {
-  const { dateRange, onCalendarDayPress } = useDateRange();
+  const { calendarActiveDateRanges, onCalendarDayPress } = useDateRange();
   return (
     <Calendar.List
       calendarPreActiveDateRanges={preActiveDateRanges}
-      calendarActiveDateRanges={[dateRange]}
+      calendarActiveDateRanges={calendarActiveDateRanges}
       onCalendarDayPress={onCalendarDayPress}
-      calendarDayHeight={48}
       showSixWeeks
       calendarMaxDateId="2026-12-31"
+      calendarMinDateId="2024-01-31"
     />
   );
 };
