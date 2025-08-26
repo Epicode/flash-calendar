@@ -249,6 +249,7 @@ export const CalendarList = memo(
           calendarRowVerticalSpacing,
           calendarAdditionalHeight,
           calendarWeekHeaderHeight,
+          showSixWeeks,
         });
         layout.size = monthHeight;
       },
@@ -259,6 +260,7 @@ export const CalendarList = memo(
         calendarRowVerticalSpacing,
         calendarSpacing,
         calendarWeekHeaderHeight,
+        showSixWeeks,
       ]
     );
 

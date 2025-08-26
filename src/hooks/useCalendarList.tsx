@@ -268,6 +268,7 @@ export const getHeightForMonth = ({
   calendarAdditionalHeight: extraHeight,
   calendarMonth,
   calendarSpacing,
+  showSixWeeks,
 }: {
   calendarAdditionalHeight: number;
   calendarDayHeight: number;
@@ -276,12 +277,15 @@ export const getHeightForMonth = ({
   calendarWeekHeaderHeight: number;
   calendarMonth: CalendarMonth;
   calendarSpacing: number;
+  showSixWeeks?: boolean;
 }) => {
   const headerHeight = header + vSpacing + weekName + vSpacing;
+
+  const numberOfWeeks = showSixWeeks ? 6 : calendarMonth.numberOfWeeks;
   const daysHeight =
-    day * calendarMonth.numberOfWeeks +
+    day * numberOfWeeks +
     // The last week doesn't have a bottom spacing (not referring to `calendarSpacing`)
-    (calendarMonth.numberOfWeeks - 1) * vSpacing;
+    (numberOfWeeks - 1) * vSpacing;
 
   return headerHeight + daysHeight + extraHeight + calendarSpacing;
 };
