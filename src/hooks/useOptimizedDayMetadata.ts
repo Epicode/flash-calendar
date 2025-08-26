@@ -6,10 +6,17 @@ import {
   type CalendarActiveDateRange,
   type CalendarDayMetadata,
 } from "./useCalendar";
+import { shallowEqual } from "../helpers/shallowEqual";
 
 interface OnSetActiveDateRangesPayload {
   instanceId?: string;
   ranges: CalendarActiveDateRange[];
+  preRanges: CalendarActiveDateRange[];
+}
+
+interface OnSetPreActiveDateRangesPayload {
+  instanceId?: string;
+  preRanges: CalendarActiveDateRange[];
 }
 
 /**
@@ -22,7 +29,7 @@ interface OnSetActiveDateRangesPayload {
  */
 export const activeDateRangesEmitter = mitt<{
   onSetActiveDateRanges: OnSetActiveDateRangesPayload;
-  onSetPreActiveDateRanges: OnSetActiveDateRangesPayload;
+  onSetPreActiveDateRanges: OnSetPreActiveDateRangesPayload;
 }>();
 
 /**
@@ -44,81 +51,21 @@ export const useOptimizedDayMetadata = (
   calendarInstanceId?: string
 ) => {
   const [metadata, setMetadata] = useState(baseMetadata);
-
-  // This is used to store the matadata with the pre-active date ranges.
-  const [preMetadata, setPreMetadata] = useState(baseMetadata);
-
   const safeCalendarInstanceId =
     calendarInstanceId ?? DEFAULT_CALENDAR_INSTANCE_ID;
 
   // Ensure the metadata is updated when the base changes.
   useEffect(() => {
     setMetadata(baseMetadata);
-    setPreMetadata(baseMetadata);
   }, [baseMetadata]);
 
   useEffect(() => {
     const handler = (payload: OnSetActiveDateRangesPayload) => {
-      const { ranges, instanceId = DEFAULT_CALENDAR_INSTANCE_ID } = payload;
-      if (instanceId !== safeCalendarInstanceId) {
-        // This event is not for this instance, ignore it.
-        return;
-      }
-
-      // We're only interested in the active date ranges, no need to worry about
-      // disabled states. These are already covered by the base metadata.
       const {
-        isStartOfRange,
-        isEndOfRange,
-        isRangeValid,
-        state,
-        color,
-        textColor,
-      } = getStateFields({
-        id: metadata.id,
-        date: metadata.date,
-        calendarActiveDateRanges: ranges,
-      });
-
-      if (state === "active") {
-        const newMetadata = {
-          ...metadata,
-          isStartOfRange,
-          isEndOfRange,
-          isRangeValid,
-          color,
-          state,
-          textColor,
-        };
-        setMetadata(newMetadata);
-        setPreMetadata(newMetadata);
-      } else if (metadata.state === "active") {
-        setPreMetadata({
-          ...metadata,
-          isStartOfRange,
-          isEndOfRange,
-          isRangeValid,
-          color,
-          state,
-          textColor,
-        });
-      } else {
-        // Resets the state when it's no longer active.
-        setMetadata(baseMetadata);
-        setPreMetadata(baseMetadata);
-      }
-    };
-
-    activeDateRangesEmitter.on("onSetPreActiveDateRanges", handler);
-
-    return () => {
-      activeDateRangesEmitter.off("onSetPreActiveDateRanges", handler);
-    };
-  }, [safeCalendarInstanceId, baseMetadata, metadata]);
-
-  useEffect(() => {
-    const handler = (payload: OnSetActiveDateRangesPayload) => {
-      const { ranges, instanceId = DEFAULT_CALENDAR_INSTANCE_ID } = payload;
+        ranges,
+        preRanges,
+        instanceId = DEFAULT_CALENDAR_INSTANCE_ID,
+      } = payload;
       if (instanceId !== safeCalendarInstanceId) {
         // This event is not for this instance, ignore it.
         return;
@@ -126,6 +73,7 @@ export const useOptimizedDayMetadata = (
 
       // We're only interested in the active date ranges, no need to worry about
       // disabled states. These are already covered by the base metadata.
+
       const {
         isStartOfRange,
         isEndOfRange,
@@ -137,20 +85,25 @@ export const useOptimizedDayMetadata = (
         id: baseMetadata.id,
         date: baseMetadata.date,
         calendarActiveDateRanges: ranges,
+        calendarPreActiveDateRanges: preRanges,
       });
 
       if (state === "active") {
-        setMetadata((prev) => ({
-          ...prev,
-          isStartOfRange,
-          isEndOfRange,
-          isRangeValid,
-          color,
-          state,
-          textColor,
-        }));
-      } else if (preMetadata.state === "active") {
-        setMetadata(preMetadata);
+        setMetadata((prev) => {
+          const newMetadata = {
+            ...prev,
+            isStartOfRange,
+            isEndOfRange,
+            isRangeValid,
+            color,
+            state,
+            textColor,
+          };
+          if (shallowEqual(prev, newMetadata)) {
+            return prev;
+          }
+          return newMetadata;
+        });
       } else {
         // Resets the state when it's no longer active.
         setMetadata(baseMetadata);
@@ -162,7 +115,7 @@ export const useOptimizedDayMetadata = (
     return () => {
       activeDateRangesEmitter.off("onSetActiveDateRanges", handler);
     };
-  }, [safeCalendarInstanceId, preMetadata, baseMetadata]);
+  }, [safeCalendarInstanceId, baseMetadata]);
 
   return metadata;
 };

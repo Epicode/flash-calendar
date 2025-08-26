@@ -3,8 +3,10 @@ import React from "react";
 import { Calendar } from "../../src";
 import { useDateRange } from "../../src/hooks/useDateRange";
 
-export const BasicCalendarList = () => {
-  const { calendarActiveDateRanges, onCalendarDayPress } = useDateRange();
+export const BasicCalendarList = ({
+  calendarActiveDateRanges,
+  onCalendarDayPress,
+}) => {
   return (
     <Calendar.List
       calendarActiveDateRanges={calendarActiveDateRanges}
