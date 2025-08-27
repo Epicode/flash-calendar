@@ -92,19 +92,32 @@ export interface UseCalendarParams {
    */
   calendarMonthId: string;
   /**
-   * The minimum date allowed to be selected (inclusive). Dates earlier than
-   * this will be disabled.
+   * The minimum date to be displayed in the calendar.
    *
    * **Tip**: To convert to date ID, use `toDateId(date)`.
    */
   calendarMinDateId?: string;
+  /**
+   * The maximum date to be displayed in the calendar.
+   *
+   * **Tip**: To convert to date ID, use `toDateId(date)`.
+   */
+  calendarMaxDateId?: string;
+
+  /**
+   * The minimum date to be selected.
+   *
+   * **Tip**: To convert to date ID, use `toDateId(date)`.
+   */
+  calendarMinSelectedDateId?: string;
+
   /**
    * The maximum date allowed to be selected (inclusive). Dates later than this
    * will be disabled.
    *
    * **Tip**: To convert to date ID, use `toDateId(date)`.
    */
-  calendarMaxDateId?: string;
+  calendarMaxSelectedDateId?: string;
 
   /**
    * The locale to use for the date formatting. If you're using custom
@@ -179,8 +192,8 @@ type GetStateFields = Pick<
   UseCalendarParams,
   | "calendarActiveDateRanges"
   | "calendarPreActiveDateRanges"
-  | "calendarMinDateId"
-  | "calendarMaxDateId"
+  | "calendarMinSelectedDateId"
+  | "calendarMaxSelectedDateId"
   | "calendarDisabledDateIds"
   | "disabledDaysIndexes"
   | "restrictions"
@@ -200,8 +213,8 @@ export const getStateFields = ({
   date,
   calendarActiveDateRanges,
   calendarPreActiveDateRanges,
-  calendarMinDateId,
-  calendarMaxDateId,
+  calendarMinSelectedDateId,
+  calendarMaxSelectedDateId,
   calendarDisabledDateIds,
   disabledDaysIndexes,
   restrictions,
@@ -255,8 +268,8 @@ export const getStateFields = ({
   const isDisabled =
     (!isRestricted ||
       calendarDisabledDateIds?.includes(id) ||
-      (calendarMinDateId && id < calendarMinDateId) ||
-      (calendarMaxDateId && id > calendarMaxDateId)) === true;
+      (calendarMinSelectedDateId && id < calendarMinSelectedDateId) ||
+      (calendarMaxSelectedDateId && id > calendarMaxSelectedDateId)) === true;
 
   const isToday = todayId === id;
 

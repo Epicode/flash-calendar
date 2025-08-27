@@ -15,6 +15,8 @@ export const BasicCalendarList = ({
       showSixWeeks
       calendarMaxDateId="2026-12-31"
       calendarMinDateId="2024-01-31"
+      calendarMaxSelectedDateId="2025-08-31"
+      calendarMinSelectedDateId="2025-08-27"
     />
   );
 };
