@@ -50,7 +50,7 @@ type CalendarItemDayTheme = Record<
   }) => DayTheme
 >;
 
-const buildBaseStyles = (theme: BaseTheme): CalendarItemDayTheme => {
+export const buildBaseStyles = (theme: BaseTheme): CalendarItemDayTheme => {
   const baseContent = {
     ...styles.baseContent,
     color: theme.colors.content.primary,

@@ -22,3 +22,5 @@ export {
 } from "./hooks/useOptimizedDayMetadata";
 
 export { useDateRange } from "./hooks/useDateRange";
+
+export { buildBaseStyles } from "./components/CalendarItemDay";
