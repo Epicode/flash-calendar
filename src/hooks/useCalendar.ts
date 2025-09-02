@@ -253,7 +253,7 @@ export const getStateFields = ({
         } else if (endId) {
           return id <= endId;
         }
-        return false;
+        return true;
       })
     : true;
 
