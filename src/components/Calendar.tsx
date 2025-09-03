@@ -206,6 +206,7 @@ export const Calendar = memo(function Calendar(props: CalendarProps) {
     calendarMonthId,
     calendarColorScheme,
     calendarPreActiveDateRanges,
+    restrictions,
     ...otherProps
   } = props;
 
@@ -214,6 +215,7 @@ export const Calendar = memo(function Calendar(props: CalendarProps) {
       instanceId: calendarInstanceId,
       ranges: calendarActiveDateRanges ?? [],
       preRanges: calendarPreActiveDateRanges ?? [],
+      restrictions,
     });
     /**
      * While `calendarMonthId` is not used by the effect, we still need it in
@@ -228,6 +230,7 @@ export const Calendar = memo(function Calendar(props: CalendarProps) {
   }, [
     calendarActiveDateRanges,
     calendarPreActiveDateRanges,
+    restrictions,
     calendarInstanceId,
     calendarMonthId,
   ]);

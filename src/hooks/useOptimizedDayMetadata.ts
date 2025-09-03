@@ -12,11 +12,10 @@ interface OnSetActiveDateRangesPayload {
   instanceId?: string;
   ranges: CalendarActiveDateRange[];
   preRanges: CalendarActiveDateRange[];
-}
-
-interface OnSetPreActiveDateRangesPayload {
-  instanceId?: string;
-  preRanges: CalendarActiveDateRange[];
+  restrictions?: {
+    startId?: string;
+    endId?: string;
+  }[];
 }
 
 /**
@@ -29,7 +28,6 @@ interface OnSetPreActiveDateRangesPayload {
  */
 export const activeDateRangesEmitter = mitt<{
   onSetActiveDateRanges: OnSetActiveDateRangesPayload;
-  onSetPreActiveDateRanges: OnSetPreActiveDateRangesPayload;
 }>();
 
 /**
@@ -64,6 +62,7 @@ export const useOptimizedDayMetadata = (
       const {
         ranges,
         preRanges,
+        restrictions,
         instanceId = DEFAULT_CALENDAR_INSTANCE_ID,
       } = payload;
       if (instanceId !== safeCalendarInstanceId) {
@@ -81,14 +80,17 @@ export const useOptimizedDayMetadata = (
         state,
         color,
         textColor,
+        isDimmed,
+        isDisabled,
       } = getStateFields({
         id: baseMetadata.id,
         date: baseMetadata.date,
         calendarActiveDateRanges: ranges,
         calendarPreActiveDateRanges: preRanges,
+        restrictions,
       });
 
-      if (state === "active") {
+      if (state === "active" || state === "disabled") {
         setMetadata((prev) => {
           const newMetadata = {
             ...prev,
@@ -98,6 +100,8 @@ export const useOptimizedDayMetadata = (
             color,
             state,
             textColor,
+            isDimmed,
+            isDisabled,
           };
           if (shallowEqual(prev, newMetadata)) {
             return prev;
