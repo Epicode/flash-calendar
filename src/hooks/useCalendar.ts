@@ -15,7 +15,7 @@ import { range } from "../helpers/numbers";
 
 const getNumberOfEmptyCellsAtStart = (
   month: Date,
-  firstDayOfWeek: "sunday" | "monday"
+  firstDayOfWeek: "sunday" | "monday",
 ) => {
   const startOfMonthDay = month.getDay();
 
@@ -271,6 +271,16 @@ export const getStateFields = ({
       (calendarMinSelectedDateId && id < calendarMinSelectedDateId) ||
       (calendarMaxSelectedDateId && id > calendarMaxSelectedDateId)) === true;
 
+  if (id === "2026-01-13") {
+    console.log(
+      "2026-01-13",
+      isDisabled,
+      calendarMinSelectedDateId,
+      calendarMaxSelectedDateId,
+      calendarMinSelectedDateId && id <= calendarMinSelectedDateId,
+      calendarMaxSelectedDateId && id >= calendarMaxSelectedDateId,
+    );
+  }
   const isToday = todayId === id;
 
   const state: DayState = activeRange
@@ -334,7 +344,7 @@ export const buildCalendar = (params: UseCalendarParams) => {
 
   const emptyDaysAtStart = getNumberOfEmptyCellsAtStart(
     monthStart,
-    calendarFirstDayOfWeek
+    calendarFirstDayOfWeek,
   );
 
   const startOfWeekIndex = calendarFirstDayOfWeek === "sunday" ? 0 : 1;
@@ -354,7 +364,7 @@ export const buildCalendar = (params: UseCalendarParams) => {
           date: dayToIterate,
           displayLabel: getCalendarDayFormat(
             dayToIterate,
-            calendarFormatLocale
+            calendarFormatLocale,
           ),
           id,
           isDifferentMonth: true,
@@ -428,7 +438,7 @@ export const buildCalendar = (params: UseCalendarParams) => {
       };
       dayToIterate = addDays(dayToIterate, 1);
       return dayShape;
-    })
+    }),
   );
 
   // Add an extra week if showSixWeeks is true and we have fewer than 6 weeks
@@ -462,8 +472,8 @@ export const buildCalendar = (params: UseCalendarParams) => {
   const weekDaysList = range(1, 7).map((i) =>
     getCalendarWeekDayFormat(
       addDays(startOfWeekDate, i - 1),
-      calendarFormatLocale
-    )
+      calendarFormatLocale,
+    ),
   );
 
   return {

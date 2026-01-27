@@ -22,7 +22,7 @@ export interface CalendarMonth {
 const buildMonthList = (
   startingMonth: Date,
   endingMonth: Date,
-  firstDayOfWeek: CalendarProps["calendarFirstDayOfWeek"] = "sunday"
+  firstDayOfWeek: CalendarProps["calendarFirstDayOfWeek"] = "sunday",
 ): CalendarMonth[] => {
   const startingMonthId = toDateId(startingMonth);
   const endingMonthId = toDateId(endingMonth);
@@ -81,7 +81,7 @@ export interface UseCalendarListParams
 const getEndingMonth = (
   calendarFutureScrollRange: number,
   calendarMaxDateId: string | undefined,
-  baseDate: Date
+  baseDate: Date,
 ) => {
   const endingMonthFromRange = addMonths(baseDate, calendarFutureScrollRange);
   const newEndingMonthId = toDateId(endingMonthFromRange);
@@ -96,7 +96,7 @@ const getEndingMonth = (
 const getStartingMonth = (
   calendarPastScrollRange: number,
   calendarMinDateId: string | undefined,
-  baseDate: Date
+  baseDate: Date,
 ) => {
   const startingMonthFromRange = subMonths(baseDate, calendarPastScrollRange);
   const newStartingMonthId = toDateId(startingMonthFromRange);
@@ -142,14 +142,22 @@ export const useCalendarList = ({
     const startingMonth = getStartingMonth(
       calendarPastScrollRangeInMonths,
       calendarMinDateId,
-      currentMonth
+      currentMonth,
     );
+
+    if (calendarMinDateId === "2024-01-01") {
+      console.log("startingMonth", startingMonth);
+    }
 
     const endingMonth = getEndingMonth(
       calendarFutureScrollRangeInMonths,
       calendarMaxDateId,
-      currentMonth
+      currentMonth,
     );
+
+    if (calendarMaxDateId === "2024-01-31") {
+      console.log("endingMonth", endingMonth);
+    }
 
     return buildMonthList(startingMonth, endingMonth, calendarFirstDayOfWeek);
   });
@@ -166,20 +174,20 @@ export const useCalendarList = ({
       const endingMonth = getEndingMonth(
         Math.max(numberOfMonths - 1, 0),
         calendarMaxDateId,
-        startingMonth
+        startingMonth,
       );
 
       const newMonths = buildMonthList(
         startingMonth,
         endingMonth,
-        calendarFirstDayOfWeek
+        calendarFirstDayOfWeek,
       );
 
       const newMonthList = [...monthList, ...newMonths];
       setMonthList(newMonthList);
       return newMonthList;
     },
-    [calendarFirstDayOfWeek, calendarMaxDateId, monthList]
+    [calendarFirstDayOfWeek, calendarMaxDateId, monthList],
   );
 
   const prependMonths = useCallback(
@@ -190,20 +198,20 @@ export const useCalendarList = ({
       const startingMonth = getStartingMonth(
         Math.max(numberOfMonths - 1, 0),
         calendarMinDateId,
-        endingMonth
+        endingMonth,
       );
 
       const newMonths = buildMonthList(
         startingMonth,
         endingMonth,
-        calendarFirstDayOfWeek
+        calendarFirstDayOfWeek,
       );
 
       const newMonthList = [...newMonths, ...monthList];
       setMonthList(newMonthList);
       return newMonthList;
     },
-    [calendarFirstDayOfWeek, calendarMinDateId, monthList]
+    [calendarFirstDayOfWeek, calendarMinDateId, monthList],
   );
 
   const addMissingMonths = useCallback(
@@ -215,16 +223,16 @@ export const useCalendarList = ({
       if (targetMonthId > lastMonth.id) {
         return appendMonths(
           // @ts-ignore
-          differenceInMonths(fromDateId(targetMonthId), lastMonth.date)
+          differenceInMonths(fromDateId(targetMonthId), lastMonth.date),
         );
       } else {
         return prependMonths(
           // @ts-ignore
-          differenceInMonths(firstMonth.date, fromDateId(targetMonthId))
+          differenceInMonths(firstMonth.date, fromDateId(targetMonthId)),
         );
       }
     },
-    [appendMonths, monthList, prependMonths]
+    [appendMonths, monthList, prependMonths],
   );
 
   const initialMonthIndex = useMemo(() => {

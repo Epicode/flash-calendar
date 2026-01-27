@@ -1,24 +1,83 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 
 import { Calendar } from "../../src";
 import { useDateRange } from "../../src/hooks/useDateRange";
+import { View } from "react-native";
 
 export const BasicCalendarList = ({
   calendarActiveDateRanges,
   onCalendarDayPress,
+  dateRange,
 }) => {
+  const filteredRestrictions = useMemo(() => {
+    return filterRestrictions(restrictions, dateRange);
+  }, [dateRange]);
+
   return (
-    <Calendar.List
-      calendarActiveDateRanges={calendarActiveDateRanges}
-      calendarPreActiveDateRanges={preActiveDateRanges}
-      onCalendarDayPress={onCalendarDayPress}
-      showSixWeeks
-      calendarMaxDateId="2026-12-31"
-      calendarMinDateId="2024-01-31"
-      calendarMaxSelectedDateId="2025-08-31"
-      calendarMinSelectedDateId="2025-08-27"
-    />
+    <View style={{ flex: 1 }}>
+      <Calendar.List
+        calendarActiveDateRanges={calendarActiveDateRanges}
+        calendarPreActiveDateRanges={preActiveDateRanges}
+        onCalendarDayPress={onCalendarDayPress}
+        showSixWeeks
+        calendarMaxDateId="2026-12-31"
+        calendarMinDateId="2026-01-15"
+        calendarMaxSelectedDateId="2026-08-31"
+        calendarMinSelectedDateId="2026-01-27"
+      />
+    </View>
   );
+};
+
+const restrictions = [
+  { startId: undefined, endId: "2025-09-03" },
+  { startId: "2025-09-05", endId: "2025-09-25" },
+];
+
+export const filterRestrictions = (
+  restrictions: { startId?: string; endId?: string }[] | null | undefined,
+  selectedRange: { startId?: string; endId?: string },
+) => {
+  const startSelectedRangeId = selectedRange.startId;
+  if (!startSelectedRangeId) {
+    return restrictions;
+  }
+  const filteredRestrictions = restrictions?.filter((restriction) => {
+    // jezeli nie ma startId to sprawdzaj czy endId jest mniejszy od startSelectedRangeId
+
+    if (
+      !restriction.startId &&
+      restriction.endId &&
+      startSelectedRangeId <= restriction.endId
+    ) {
+      return restriction;
+    }
+
+    // jezeli nie ma endId to sprawdzaj czy startId jest wiekszy od startSelectedRangeId
+
+    if (
+      !restriction.endId &&
+      restriction.startId &&
+      startSelectedRangeId >= restriction.startId
+    ) {
+      return restriction;
+    }
+
+    // jezeli jest jedno i drugie to sprawdzaj czy jest w przedziale
+
+    if (
+      restriction.startId &&
+      restriction.endId &&
+      startSelectedRangeId >= restriction.startId &&
+      startSelectedRangeId <= restriction.endId
+    ) {
+      return restriction;
+    }
+
+    return null;
+  });
+
+  return filteredRestrictions;
 };
 
 const preActiveDateRanges = [
@@ -398,6 +457,12 @@ const preActiveDateRanges = [
     color: "#CDDC39",
     endId: "2025-09-18",
     startId: "2025-09-18",
+    textColor: undefined,
+  },
+  {
+    color: "#feae8b",
+    endId: "2026-01-13",
+    startId: "2026-01-12",
     textColor: undefined,
   },
   {

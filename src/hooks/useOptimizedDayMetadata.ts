@@ -9,6 +9,8 @@ import {
 import { shallowEqual } from "../helpers/shallowEqual";
 
 interface OnSetActiveDateRangesPayload {
+  calendarMinSelectedDateId?: string;
+  calendarMaxSelectedDateId?: string;
   instanceId?: string;
   ranges: CalendarActiveDateRange[];
   preRanges: CalendarActiveDateRange[];
@@ -46,7 +48,7 @@ const DEFAULT_CALENDAR_INSTANCE_ID = "flash-calendar-default-instance";
  */
 export const useOptimizedDayMetadata = (
   baseMetadata: CalendarDayMetadata,
-  calendarInstanceId?: string
+  calendarInstanceId?: string,
 ) => {
   const [metadata, setMetadata] = useState(baseMetadata);
   const safeCalendarInstanceId =
@@ -64,6 +66,8 @@ export const useOptimizedDayMetadata = (
         preRanges,
         restrictions,
         instanceId = DEFAULT_CALENDAR_INSTANCE_ID,
+        calendarMinSelectedDateId,
+        calendarMaxSelectedDateId,
       } = payload;
       if (instanceId !== safeCalendarInstanceId) {
         // This event is not for this instance, ignore it.
@@ -85,6 +89,8 @@ export const useOptimizedDayMetadata = (
       } = getStateFields({
         id: baseMetadata.id,
         date: baseMetadata.date,
+        calendarMinSelectedDateId,
+        calendarMaxSelectedDateId,
         calendarActiveDateRanges: ranges,
         calendarPreActiveDateRanges: preRanges,
         restrictions,

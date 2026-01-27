@@ -28,7 +28,7 @@ describe("getHeightForMonth", () => {
           date: new Date(),
           numberOfWeeks: 5,
         },
-      })
+      }),
     ).toBe(210);
   });
 
@@ -53,7 +53,7 @@ describe("getHeightForMonth", () => {
           date: new Date(),
           numberOfWeeks: 5,
         },
-      })
+      }),
     ).toBe(309);
   });
 
@@ -78,7 +78,7 @@ describe("getHeightForMonth", () => {
           date: new Date(),
           numberOfWeeks: 5,
         },
-      })
+      }),
     ).toBe(234);
   });
 
@@ -103,7 +103,7 @@ describe("getHeightForMonth", () => {
           date: new Date(),
           numberOfWeeks: 6,
         },
-      })
+      }),
     ).toBe(235);
   });
 
@@ -128,7 +128,7 @@ describe("getHeightForMonth", () => {
           date: fromDateId("2024-02-01"),
           numberOfWeeks: 5,
         },
-      })
+      }),
     ).toBe(280);
   });
 });
@@ -144,7 +144,7 @@ describe("useCalendarList", () => {
           calendarInitialMonthId: "2024-07-01",
           calendarMinDateId: "2024-01-01",
           calendarMaxDateId: "2024-12-31",
-        })
+        }),
       );
 
       // Initially, we render 5 months: the initial month +- 2
@@ -200,7 +200,7 @@ describe("useCalendarList", () => {
           calendarInitialMonthId: "2024-07-01",
           calendarMinDateId: "2024-01-01",
           calendarMaxDateId: "2024-12-31",
-        })
+        }),
       );
 
       // Initially, we render 5 months: the initial month +- 2
@@ -253,15 +253,15 @@ describe("useCalendarList", () => {
           calendarFirstDayOfWeek: "sunday",
           calendarFutureScrollRangeInMonths: 12,
           calendarPastScrollRangeInMonths: 12,
-          calendarMinDateId: "2024-01-01",
-          calendarMaxDateId: "2024-01-31",
-        })
+          calendarMinDateId: "2026-01-01",
+          calendarMaxDateId: "2026-01-31",
+        }),
       );
 
       expect(result.current.monthList).toHaveLength(1);
       const [january] = result.current.monthList;
       expect(january.numberOfWeeks).toBe(5);
-      expect(january.id).toBe("2024-01-01");
+      expect(january.id).toBe("2026-01-01");
     });
 
     it("Returns a range of months bounded by the min and max dates", () => {
@@ -273,7 +273,7 @@ describe("useCalendarList", () => {
           calendarInitialMonthId: "2024-03-01",
           calendarMinDateId: "2024-01-01",
           calendarMaxDateId: "2024-07-15",
-        })
+        }),
       );
 
       expect(result.current.monthList).toHaveLength(7);
@@ -312,7 +312,7 @@ describe("useCalendarList", () => {
           calendarInitialMonthId: "2024-03-01",
           calendarMinDateId: "2024-01-01",
           calendarMaxDateId: "2024-03-03",
-        })
+        }),
       );
       expect(result.current.monthList).toHaveLength(3);
       expect(result.current.monthList[0].id).toBe("2024-01-01");
@@ -328,7 +328,7 @@ describe("useCalendarList", () => {
           calendarInitialMonthId: "2024-09-01",
           calendarMinDateId: "2024-01-01",
           calendarMaxDateId: "2024-12-31",
-        })
+        }),
       );
 
       const currentMonthList = result.current.monthList;
@@ -354,7 +354,7 @@ describe("useCalendarList", () => {
         calendarFirstDayOfWeek: "sunday",
         calendarFutureScrollRangeInMonths: 0,
         calendarPastScrollRangeInMonths: 0,
-      })
+      }),
     );
 
     const currentMonthList = result.current.monthList;
@@ -370,7 +370,7 @@ describe("useCalendarList", () => {
           calendarFirstDayOfWeek: "sunday",
           calendarFutureScrollRangeInMonths: 12,
           calendarPastScrollRangeInMonths: 12,
-        })
+        }),
       );
 
       const { monthList, initialMonthIndex } = result.current;

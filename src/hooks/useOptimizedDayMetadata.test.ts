@@ -60,7 +60,7 @@ describe("useOptimizedDayMetadata", () => {
       (initial) => useOptimizedDayMetadata(initial),
       {
         initialProps: baseMetadata,
-      }
+      },
     );
 
     expect(result.current).toEqual(baseMetadata);
@@ -103,7 +103,7 @@ describe("useOptimizedDayMetadata", () => {
       (initial) => useOptimizedDayMetadata(initial),
       {
         initialProps: baseMetadata,
-      }
+      },
     );
     expect(result.current).toEqual(baseMetadata);
 
@@ -153,7 +153,7 @@ describe("useOptimizedDayMetadata", () => {
       (initial) => useOptimizedDayMetadata(initial),
       {
         initialProps: baseMetadata,
-      }
+      },
     );
     expect(result.current).toEqual(baseMetadata);
 
@@ -203,7 +203,7 @@ describe("useOptimizedDayMetadata", () => {
       (initial) => useOptimizedDayMetadata(initial),
       {
         initialProps: baseMetadata,
-      }
+      },
     );
     expect(result.current).toEqual(baseMetadata);
 
@@ -254,7 +254,7 @@ describe("useOptimizedDayMetadata", () => {
       (initial) => useOptimizedDayMetadata(initial),
       {
         initialProps: baseMetadata,
-      }
+      },
     );
     expect(result.current).toEqual(baseMetadata);
 
@@ -347,7 +347,7 @@ describe("useOptimizedDayMetadata", () => {
       (initial) => useOptimizedDayMetadata(initial),
       {
         initialProps: baseMetadata,
-      }
+      },
     );
     expect(result.current).toEqual(baseMetadata);
 
@@ -438,7 +438,7 @@ describe("useOptimizedDayMetadata with calendarInstanceId", () => {
     const instanceId = "test-calendar-1";
     const baseMetadata = getBaseMetadata("2024-02-16");
     const { result } = renderHook(() =>
-      useOptimizedDayMetadata(baseMetadata, instanceId)
+      useOptimizedDayMetadata(baseMetadata, instanceId),
     );
 
     act(() => {
@@ -466,7 +466,7 @@ describe("useOptimizedDayMetadata with calendarInstanceId", () => {
     const instanceId = "test-calendar-2";
     const baseMetadata = getBaseMetadata("2024-02-16");
     const { result } = renderHook(() =>
-      useOptimizedDayMetadata(baseMetadata, instanceId)
+      useOptimizedDayMetadata(baseMetadata, instanceId),
     );
 
     act(() => {
@@ -493,10 +493,10 @@ describe("useOptimizedDayMetadata with calendarInstanceId", () => {
     const baseMetadata2 = getBaseMetadata("2024-02-16");
 
     const { result: result1 } = renderHook(() =>
-      useOptimizedDayMetadata(baseMetadata1, instanceId1)
+      useOptimizedDayMetadata(baseMetadata1, instanceId1),
     );
     const { result: result2 } = renderHook(() =>
-      useOptimizedDayMetadata(baseMetadata2, instanceId2)
+      useOptimizedDayMetadata(baseMetadata2, instanceId2),
     );
 
     act(() => {
@@ -550,7 +550,7 @@ describe("useOptimizedDayMetadata with calendarInstanceId", () => {
     const instanceId = "test-calendar-5";
     const baseMetadata = getBaseMetadata("2024-02-16");
     const { result } = renderHook(() =>
-      useOptimizedDayMetadata(baseMetadata, instanceId)
+      useOptimizedDayMetadata(baseMetadata, instanceId),
     );
 
     act(() => {
@@ -638,7 +638,7 @@ describe("useOptimizedDayMetadata with pre-active ranges", () => {
     const instanceId = "test-calendar-pre-1";
     const baseMetadata = getBaseMetadata("2024-02-16");
     const { result } = renderHook(() =>
-      useOptimizedDayMetadata(baseMetadata, instanceId)
+      useOptimizedDayMetadata(baseMetadata, instanceId),
     );
 
     act(() => {
@@ -666,7 +666,7 @@ describe("useOptimizedDayMetadata with pre-active ranges", () => {
     const instanceId = "test-calendar-pre-2";
     const baseMetadata = getBaseMetadata("2024-02-16");
     const { result } = renderHook(() =>
-      useOptimizedDayMetadata(baseMetadata, instanceId)
+      useOptimizedDayMetadata(baseMetadata, instanceId),
     );
 
     act(() => {

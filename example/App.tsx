@@ -13,7 +13,8 @@ import { useDateRange } from "../src";
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
-  const { calendarActiveDateRanges, onCalendarDayPress } = useDateRange();
+  const { calendarActiveDateRanges, dateRange, onCalendarDayPress } =
+    useDateRange();
 
   return (
     <SafeAreaView style={styles.sfeAreaView}>
@@ -32,6 +33,7 @@ export default function App() {
             <Button title="Close" onPress={() => setIsOpen(false)} />
           </View>
           <BasicCalendarList
+            dateRange={dateRange}
             calendarActiveDateRanges={calendarActiveDateRanges}
             onCalendarDayPress={onCalendarDayPress}
           />

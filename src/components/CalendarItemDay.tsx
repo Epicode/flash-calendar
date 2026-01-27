@@ -173,7 +173,7 @@ export interface CalendarItemDayProps {
           isPressed: boolean;
           isHovered?: boolean;
           isFocused?: boolean;
-        }
+        },
       ) => Partial<DayTheme>
     >
   >;
