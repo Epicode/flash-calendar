@@ -271,16 +271,6 @@ export const getStateFields = ({
       (calendarMinSelectedDateId && id < calendarMinSelectedDateId) ||
       (calendarMaxSelectedDateId && id > calendarMaxSelectedDateId)) === true;
 
-  if (id === "2026-01-13") {
-    console.log(
-      "2026-01-13",
-      isDisabled,
-      calendarMinSelectedDateId,
-      calendarMaxSelectedDateId,
-      calendarMinSelectedDateId && id <= calendarMinSelectedDateId,
-      calendarMaxSelectedDateId && id >= calendarMaxSelectedDateId,
-    );
-  }
   const isToday = todayId === id;
 
   const state: DayState = activeRange

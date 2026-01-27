@@ -145,19 +145,11 @@ export const useCalendarList = ({
       currentMonth,
     );
 
-    if (calendarMinDateId === "2024-01-01") {
-      console.log("startingMonth", startingMonth);
-    }
-
     const endingMonth = getEndingMonth(
       calendarFutureScrollRangeInMonths,
       calendarMaxDateId,
       currentMonth,
     );
-
-    if (calendarMaxDateId === "2024-01-31") {
-      console.log("endingMonth", endingMonth);
-    }
 
     return buildMonthList(startingMonth, endingMonth, calendarFirstDayOfWeek);
   });
