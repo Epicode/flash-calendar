@@ -20,8 +20,8 @@ export const BasicCalendarList = ({
         calendarPreActiveDateRanges={preActiveDateRanges}
         onCalendarDayPress={onCalendarDayPress}
         showSixWeeks
-        calendarMaxDateId="2026-12-31"
-        calendarMinDateId="2026-01-15"
+        calendarMaxDateId="2029-12-31"
+        calendarMinDateId="2024-01-15"
         calendarMaxSelectedDateId="2026-08-31"
         calendarMinSelectedDateId="2026-01-27"
       />

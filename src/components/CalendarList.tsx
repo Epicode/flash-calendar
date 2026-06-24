@@ -1,4 +1,4 @@
-import type { FlashListProps } from "@shopify/flash-list";
+import type { FlashListProps, FlashListRef } from "@shopify/flash-list";
 import { FlashList } from "@shopify/flash-list";
 import type { Ref } from "react";
 import React, {
@@ -101,12 +101,12 @@ export interface CalendarListRef {
   scrollToMonth: (
     date: Date,
     animated: boolean,
-    params?: ImperativeScrollParams
+    params?: ImperativeScrollParams,
   ) => void;
   scrollToDate: (
     date: Date,
     animated: boolean,
-    params?: ImperativeScrollParams
+    params?: ImperativeScrollParams,
   ) => void;
   scrollToOffset: (offset: number, animated: boolean) => void;
 }
@@ -114,7 +114,7 @@ export interface CalendarListRef {
 export const CalendarList = memo(
   forwardRef(function CalendarList(
     props: CalendarListProps,
-    ref: Ref<CalendarListRef>
+    ref: Ref<CalendarListRef>,
   ) {
     const {
       // List-related props
@@ -140,6 +140,8 @@ export const CalendarList = memo(
       calendarColorScheme,
       theme,
       onEndReached,
+      onStartReached,
+      maintainVisibleContentPosition,
       ...otherProps
     } = props;
 
@@ -218,18 +220,23 @@ export const CalendarList = memo(
         restrictions,
         dimmedDays,
         showSixWeeks,
-      ]
+      ],
     );
 
-    const { initialMonthIndex, monthList, appendMonths, addMissingMonths } =
-      useCalendarList({
-        calendarFirstDayOfWeek,
-        calendarFutureScrollRangeInMonths,
-        calendarPastScrollRangeInMonths,
-        calendarInitialMonthId,
-        calendarMaxDateId,
-        calendarMinDateId,
-      });
+    const {
+      initialMonthIndex,
+      monthList,
+      appendMonths,
+      prependMonths,
+      addMissingMonths,
+    } = useCalendarList({
+      calendarFirstDayOfWeek,
+      calendarFutureScrollRangeInMonths,
+      calendarPastScrollRangeInMonths,
+      calendarInitialMonthId,
+      calendarMaxDateId,
+      calendarMinDateId,
+    });
 
     const monthListWithCalendarProps = useMemo(() => {
       return monthList.map((month) => ({
@@ -243,31 +250,48 @@ export const CalendarList = memo(
       onEndReached?.();
     }, [appendMonths, calendarFutureScrollRangeInMonths, onEndReached]);
 
-    const handleOverrideItemLayout = useCallback<
-      NonNullable<FlashListProps<CalendarMonth>["overrideItemLayout"]>
+    const handleOnStartReached = useCallback(() => {
+      prependMonths(calendarPastScrollRangeInMonths);
+      onStartReached?.();
+    }, [calendarPastScrollRangeInMonths, onStartReached, prependMonths]);
+
+    const mergedMaintainVisibleContentPosition = useMemo<
+      FlashListProps<CalendarMonthEnhanced>["maintainVisibleContentPosition"]
     >(
-      (layout, item) => {
-        const monthHeight = getHeightForMonth({
-          calendarMonth: item,
-          calendarSpacing,
-          calendarDayHeight,
-          calendarMonthHeaderHeight,
-          calendarRowVerticalSpacing,
-          calendarAdditionalHeight,
-          calendarWeekHeaderHeight,
-          showSixWeeks,
-        });
-        layout.size = monthHeight;
+      () => ({
+        disabled: false,
+        ...maintainVisibleContentPosition,
+      }),
+      [maintainVisibleContentPosition],
+    );
+
+    const flashListRef = useRef<FlashListRef<CalendarMonthEnhanced>>(null);
+
+    const calendarContainerStyle = useMemo(() => {
+      return { paddingBottom: calendarSpacing };
+    }, [calendarSpacing]);
+
+    const renderItem = useCallback(
+      ({
+        item,
+      }: {
+        item: {
+          calendarProps: Omit<CalendarProps, "calendarMonthId">;
+          id: string;
+          date: Date;
+          numberOfWeeks: number;
+        };
+      }) => {
+        return (
+          <View style={calendarContainerStyle}>
+            <CalendarItemComponent
+              calendarMonthId={item.id}
+              {...item.calendarProps}
+            />
+          </View>
+        );
       },
-      [
-        calendarAdditionalHeight,
-        calendarDayHeight,
-        calendarMonthHeaderHeight,
-        calendarRowVerticalSpacing,
-        calendarSpacing,
-        calendarWeekHeaderHeight,
-        showSixWeeks,
-      ]
+      [CalendarItemComponent, calendarContainerStyle],
     );
 
     /**
@@ -295,6 +319,7 @@ export const CalendarList = memo(
             calendarRowVerticalSpacing,
             calendarWeekHeaderHeight,
             calendarAdditionalHeight,
+            showSixWeeks,
           });
 
           return acc + currentHeight;
@@ -309,16 +334,15 @@ export const CalendarList = memo(
         calendarSpacing,
         calendarWeekHeaderHeight,
         monthList,
-      ]
+        showSixWeeks,
+      ],
     );
-
-    const flashListRef = useRef<FlashList<CalendarMonthEnhanced>>(null);
 
     useImperativeHandle(ref, () => ({
       scrollToMonth(
         date,
         animated,
-        { additionalOffset = 0 } = { additionalOffset: 0 }
+        { additionalOffset = 0 } = { additionalOffset: 0 },
       ) {
         // Wait for the next render cycle to ensure the list has been
         // updated with the new months.
@@ -334,7 +358,7 @@ export const CalendarList = memo(
         animated,
         { additionalOffset = 0 } = {
           additionalOffset: 0,
-        }
+        },
       ) {
         const currentMonthOffset = getScrollOffsetForMonth(date);
         const weekOfMonthIndex = getWeekOfMonth(date, calendarFirstDayOfWeek);
@@ -361,46 +385,19 @@ export const CalendarList = memo(
       },
     }));
 
-    const calendarContainerStyle = useMemo(() => {
-      return { paddingBottom: calendarSpacing };
-    }, [calendarSpacing]);
-
-    const renderItem = useCallback(
-      ({
-        item,
-      }: {
-        item: {
-          calendarProps: Omit<CalendarProps, "calendarMonthId">;
-          id: string;
-          date: Date;
-          numberOfWeeks: number;
-        };
-      }) => {
-        return (
-          <View style={calendarContainerStyle}>
-            <CalendarItemComponent
-              calendarMonthId={item.id}
-              {...item.calendarProps}
-            />
-          </View>
-        );
-      },
-      [calendarContainerStyle]
-    );
-
     return (
       <CalendarScrollComponent
         data={monthListWithCalendarProps}
-        estimatedItemSize={273}
         initialScrollIndex={initialMonthIndex}
         keyExtractor={keyExtractor}
+        maintainVisibleContentPosition={mergedMaintainVisibleContentPosition}
         onEndReached={handleOnEndReached}
-        overrideItemLayout={handleOverrideItemLayout}
+        onStartReached={handleOnStartReached}
         ref={flashListRef}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         {...flatListProps}
       />
     );
-  })
+  }),
 );
