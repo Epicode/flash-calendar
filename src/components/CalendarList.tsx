@@ -34,14 +34,14 @@ export interface CalendarListProps
    * How many months to show before the current month. Once the user scrolls
    * past this range and if they haven't exceeded the `calendarMinDateId`, new
    * months are prepended in this increment.
-   * @defaultValue 12
+   * @defaultValue 3
    */
   calendarPastScrollRangeInMonths?: number;
   /**
    * How many months to show after the current month. Once the user scrolls
    * past this range and if they haven't exceeded the `calendarMaxDateId`, new
    * months are appended in this increment.
-   * @defaultValue 12
+   * @defaultValue 4
    */
   calendarFutureScrollRangeInMonths?: number;
 
@@ -119,8 +119,8 @@ export const CalendarList = memo(
     const {
       // List-related props
       calendarInitialMonthId,
-      calendarPastScrollRangeInMonths = 12,
-      calendarFutureScrollRangeInMonths = 12,
+      calendarPastScrollRangeInMonths = 3,
+      calendarFutureScrollRangeInMonths = 4,
       calendarFirstDayOfWeek = "sunday",
       CalendarScrollComponent = FlashList,
       calendarFormatLocale,
@@ -246,14 +246,30 @@ export const CalendarList = memo(
     }, [calendarProps, monthList]);
 
     const handleOnEndReached = useCallback(() => {
-      appendMonths(calendarFutureScrollRangeInMonths);
-      onEndReached?.();
-    }, [appendMonths, calendarFutureScrollRangeInMonths, onEndReached]);
+      const nextMonthList = appendMonths(calendarFutureScrollRangeInMonths);
+
+      if (nextMonthList.length > monthList.length) {
+        onEndReached?.();
+      }
+    }, [
+      appendMonths,
+      calendarFutureScrollRangeInMonths,
+      monthList.length,
+      onEndReached,
+    ]);
 
     const handleOnStartReached = useCallback(() => {
-      prependMonths(calendarPastScrollRangeInMonths);
-      onStartReached?.();
-    }, [calendarPastScrollRangeInMonths, onStartReached, prependMonths]);
+      const nextMonthList = prependMonths(calendarPastScrollRangeInMonths);
+
+      if (nextMonthList.length > monthList.length) {
+        onStartReached?.();
+      }
+    }, [
+      calendarPastScrollRangeInMonths,
+      monthList.length,
+      onStartReached,
+      prependMonths,
+    ]);
 
     const mergedMaintainVisibleContentPosition = useMemo<
       FlashListProps<CalendarMonthEnhanced>["maintainVisibleContentPosition"]

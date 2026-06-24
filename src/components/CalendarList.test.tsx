@@ -35,6 +35,61 @@ const CalendarItemComponent = React.memo(() => null);
 const getMonthIds = (props) => props.data.map((month) => month.id);
 
 describe("CalendarList", () => {
+  it("defaults to 3 past months and 4 future months, bounded by min/max dates", () => {
+    let scrollProps;
+
+    const CalendarScrollComponent = React.forwardRef((props, ref) => {
+      scrollProps = props;
+
+      useImperativeHandle(ref, () => ({
+        scrollToOffset: () => {},
+      }));
+
+      return null;
+    });
+
+    act(() => {
+      create(
+        <CalendarList
+          CalendarItemComponent={CalendarItemComponent}
+          CalendarScrollComponent={CalendarScrollComponent}
+          calendarInitialMonthId="2024-07-01"
+        />,
+      );
+    });
+
+    expect(getMonthIds(scrollProps)).toEqual([
+      "2024-04-01",
+      "2024-05-01",
+      "2024-06-01",
+      "2024-07-01",
+      "2024-08-01",
+      "2024-09-01",
+      "2024-10-01",
+      "2024-11-01",
+    ]);
+    expect(scrollProps.initialScrollIndex).toBe(3);
+
+    act(() => {
+      create(
+        <CalendarList
+          CalendarItemComponent={CalendarItemComponent}
+          CalendarScrollComponent={CalendarScrollComponent}
+          calendarInitialMonthId="2024-07-01"
+          calendarMaxDateId="2024-08-20"
+          calendarMinDateId="2024-06-15"
+        />,
+      );
+    });
+
+    expect(getMonthIds(scrollProps)).toEqual([
+      "2024-06-01",
+      "2024-07-01",
+      "2024-08-01",
+    ]);
+    expect(scrollProps.initialScrollIndex).toBe(1);
+  });
+
   it("paginates in both directions and forwards start threshold props", () => {
     let scrollProps;
     let onEndReachedCalls = 0;
@@ -106,6 +161,58 @@ describe("CalendarList", () => {
       "2024-08-01",
       "2024-09-01",
     ]);
+  });
+
+  it("does not call edge callbacks when min/max dates prevent pagination", () => {
+    let scrollProps;
+    let onEndReachedCalls = 0;
+    let onStartReachedCalls = 0;
+
+    const CalendarScrollComponent = React.forwardRef((props, ref) => {
+      scrollProps = props;
+
+      useImperativeHandle(ref, () => ({
+        scrollToOffset: () => {},
+      }));
+
+      return null;
+    });
+
+    act(() => {
+      create(
+        <CalendarList
+          CalendarItemComponent={CalendarItemComponent}
+          CalendarScrollComponent={CalendarScrollComponent}
+          calendarFutureScrollRangeInMonths={1}
+          calendarInitialMonthId="2024-07-01"
+          calendarMaxDateId="2024-08-31"
+          calendarMinDateId="2024-06-01"
+          calendarPastScrollRangeInMonths={1}
+          onEndReached={() => {
+            onEndReachedCalls++;
+          }}
+          onStartReached={() => {
+            onStartReachedCalls++;
+          }}
+        />,
+      );
+    });
+
+    const initialMonthIds = [
+      "2024-06-01",
+      "2024-07-01",
+      "2024-08-01",
+    ];
+    expect(getMonthIds(scrollProps)).toEqual(initialMonthIds);
+
+    act(() => {
+      scrollProps.onEndReached();
+      scrollProps.onStartReached();
+    });
+
+    expect(onEndReachedCalls).toBe(0);
+    expect(onStartReachedCalls).toBe(0);
+    expect(getMonthIds(scrollProps)).toEqual(initialMonthIds);
   });
 
   it("lets consumers disable maintainVisibleContentPosition explicitly", () => {

@@ -175,6 +175,10 @@ export const useCalendarList = ({
         calendarFirstDayOfWeek,
       );
 
+      if (newMonths.length === 0) {
+        return monthList;
+      }
+
       const newMonthList = [...monthList, ...newMonths];
       setMonthList(newMonthList);
       return newMonthList;
@@ -198,6 +202,10 @@ export const useCalendarList = ({
         endingMonth,
         calendarFirstDayOfWeek,
       );
+
+      if (newMonths.length === 0) {
+        return monthList;
+      }
 
       const newMonthList = [...newMonths, ...monthList];
       setMonthList(newMonthList);
