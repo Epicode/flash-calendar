@@ -42,6 +42,7 @@ describe("CalendarList", () => {
       scrollProps = props;
 
       useImperativeHandle(ref, () => ({
+        scrollToIndex: () => {},
         scrollToOffset: () => {},
       }));
 
@@ -99,6 +100,7 @@ describe("CalendarList", () => {
       scrollProps = props;
 
       useImperativeHandle(ref, () => ({
+        scrollToIndex: () => {},
         scrollToOffset: () => {},
       }));
 
@@ -172,6 +174,7 @@ describe("CalendarList", () => {
       scrollProps = props;
 
       useImperativeHandle(ref, () => ({
+        scrollToIndex: () => {},
         scrollToOffset: () => {},
       }));
 
@@ -222,6 +225,7 @@ describe("CalendarList", () => {
       scrollProps = props;
 
       useImperativeHandle(ref, () => ({
+        scrollToIndex: () => {},
         scrollToOffset: () => {},
       }));
 
@@ -241,5 +245,60 @@ describe("CalendarList", () => {
     expect(scrollProps.maintainVisibleContentPosition).toEqual({
       disabled: true,
     });
+  });
+
+  it("scrolls to the initial month on mount when initial index is after the first item", () => {
+    const scrollToIndexCalls = [];
+
+    const CalendarScrollComponent = React.forwardRef((_props, ref) => {
+      useImperativeHandle(ref, () => ({
+        scrollToIndex: (params) => {
+          scrollToIndexCalls.push(params);
+        },
+        scrollToOffset: () => {},
+      }));
+
+      return null;
+    });
+
+    act(() => {
+      create(
+        <CalendarList
+          CalendarItemComponent={CalendarItemComponent}
+          CalendarScrollComponent={CalendarScrollComponent}
+          calendarInitialMonthId="2024-07-01"
+        />,
+      );
+    });
+
+    expect(scrollToIndexCalls).toEqual([{ index: 3, animated: false }]);
+  });
+
+  it("does not run the mount scroll workaround for the first item", () => {
+    const scrollToIndexCalls = [];
+
+    const CalendarScrollComponent = React.forwardRef((_props, ref) => {
+      useImperativeHandle(ref, () => ({
+        scrollToIndex: (params) => {
+          scrollToIndexCalls.push(params);
+        },
+        scrollToOffset: () => {},
+      }));
+
+      return null;
+    });
+
+    act(() => {
+      create(
+        <CalendarList
+          CalendarItemComponent={CalendarItemComponent}
+          CalendarScrollComponent={CalendarScrollComponent}
+          calendarInitialMonthId="2024-04-01"
+          calendarMinDateId="2024-04-01"
+        />,
+      );
+    });
+
+    expect(scrollToIndexCalls).toEqual([]);
   });
 });

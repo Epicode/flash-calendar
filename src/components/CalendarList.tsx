@@ -6,6 +6,7 @@ import React, {
   memo,
   useCallback,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
 } from "react";
@@ -282,6 +283,20 @@ export const CalendarList = memo(
     );
 
     const flashListRef = useRef<FlashListRef<CalendarMonthEnhanced>>(null);
+
+    // Work around FlashList v2 initialScrollIndex overlap issues.
+    useLayoutEffect(() => {
+      if (initialMonthIndex <= 0) {
+        return;
+      }
+
+      flashListRef.current?.scrollToIndex?.({
+        index: initialMonthIndex,
+        animated: false,
+      });
+      // Only run on mount.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const calendarContainerStyle = useMemo(() => {
       return { paddingBottom: calendarSpacing };
